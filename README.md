@@ -64,17 +64,13 @@ All the metrics have a predetermined practical significant value (dmin) which sh
 
 For each metric you selected as an evaluation metric, estimate its standard deviation analytically, given a sample size of 5000 cookies visiting the course overview page. Do you expect the analytic estimates to be accurate? That is, for which metrics, if any, would you want to collect an empirical estimate of the variability if you had time?
 
-Our three metrics are all in the form of probability, so we can assume them to be binomial distribution and used the formula to calculate the standard deviation of the sampling distribution for the proportion, or standard error:
-
-```math
-\sqrt{\frac{P*(1-P)}{N}}
-```
+Our three metrics are all in the form of probability, so we can assume them to be binomial distribution and used the standard error formula to calculate the standard deviation of the sampling distribution for the proportion, or standard error.
 
 Due to different unit of analysis these three metrics use, we should firstly calculate the number of unit of analysis. 
 - For **gross conversion** and **net conversion**, the unit of analysis is the number of unique cookies who click the button. In the baseline group, 40000 pageviews correspond to 3200 click on the button. 
 - For **retention**, the unit of analysis is number of users who complete checkout. In the baseline group, 40000 pageviews correspond to 660 checkouts and enrollments.
 
-The calculation is based on the [baseline data]()
+Following calculations are based on the [baseline data](https://github.com/Alisaahy/ABTesting_Project/blob/master/src/Baseline_Values.xlsx)
 
 **_Analytical Estimate of Standard Deviation_**
 
@@ -99,7 +95,7 @@ The formula for sample size is:
 As from the formula:
 - z-beta = 0.84, if 1 - beta = 0.8
 - z-alpha/2 = 1.96, if alpha = 0.05
-- Standard deviation follows the formula that: ${SE}$ = $\frac{SD}{\sqrt{N}}$, which means we assume that the standard error is proportional to <math>\frac{1}{\sqrt{N}}</math>.
+- We assume that the standard error is proportional to the square-root of sample size N.
 
 So I'll use the formula to firstly calculate the needed sample size, and then decide the total number of pageview needed.
 
@@ -110,3 +106,74 @@ So I'll use the formula to firstly calculate the needed sample size, and then de
 | Gross Conversion  | 51398 | 642475 | 237 |
 | Retention         | 78206 | 4739757 | 32 |
 | Net Conversion    | 54343 | 679287 | 34 |
+
+From the above calculation, we can know that if we want to use retention as a metric, we should spend 1185 days to gather enough pageviews for experiment, which is a pretty long-running experiment.
+We have several choices to deal with this problem and shorten the experiment:
+- Select another metric which need a smaller sample size (Gross Conversion or Net Conversion)
+- Increase alpha (increase the possibility of false positive)
+- Increase beta (increase the possibility of false negative)
+- Increase dmin (increase the practical significance boundary to not try to detect a smaller change)
+
+
+# Sanity check
+
+Start by checking whether invariant metrics are equivalent between the two groups. 
+- If the invariant metric is a simple count that should be randomly split between the 2 groups, I'll use a binomial test. I'll calculate a confidence interval around the fraction of events I expect to be assigned to the control group, and the observed value should be the actual fraction that was assigned to the control group. 
+
+- Otherwise, I'll need to construct a confidence interval for a difference in proportions, then check whether the difference between group values falls within that confidence level.
+
+- If the sanity checks fail, I'll look at the day by day data and see if I can offer any insight into what is causing the problem.
+
+Following calculations are based on the [final project_results data](https://github.com/Alisaahy/ABTesting_Project/blob/master/src/Final_Project_Results.xlsx)
+
+## For count metrics (Number of Cookies and Number of Clicks)
+Given that each cookie is randomly assigned to the control group or experiment group with probability of 0.5 and alpha = 0.05,
+- Firstly compute standard deviation of binomial distribution. 
+- Multiply by z-score to get margin of error and confidence interval around 0.5. 
+- Then calculate observed fraction, which is number of observations assigned to the control group.
+- Check whether the observed fraction lies between the Confidence interval.
+
+## For proportion metric (Click-through-probability)
+Given alpha = 0.05,
+- Firstly calculate the pooled proportion
+- Compute the pooled standard deviation of binomial distribution
+- Multiply by z-score to get margin of error
+- Compute confidence interval around 0. We expect our estimation of difference between groups to be distributed normally, with a mean of 0 and a standard deviation of the pooled standard error.
+- Calculate the observed difference in proportion between two groups and check whether the observed difference lies between the Confidence interval 
+
+**_Sanity Check Results_**
+
+| Metric | Expected Value | Observed Value | CI Lower Bound | CI Upper Bound | Result |
+|:------:|:--------------:|:--------------:|:--------------:|:--------------:|:------:|
+| Number of Cookies | 0.5000 | 0.5006 | 0.4988 | 0.5012 | Pass |
+| Number of Clicks on "Start free trial" | 0.5000 | 0.5005 | 0.4959 | 0.5041 | Pass |
+| Click-through-probability | 0 | 0.0001 | -0.0013 | 0.0013 | Pass | 
+
+
+# Check for Practical and Statistical Significance
+
+For evaluation metrics, calculate a confidence interval for the difference between the experiment and control groups, and check whether each metric is statistically and/or practically significance. 
+- A metric is statistically significant if the confidence interval does not include 0 (that is, you can be confident there was a change).
+- A metric is practically significant if the confidence interval does not include the practical significance boundary (that is, you can be confident there is a change that matters to the business.)
+
+I'll **not use Bonferroni correction** in this case. Because an unfortunate byproduct of Bonferroni correction is that I may increase the number of false negatives, where there really is an effect but we can't detect it as statistically significant. In our case, all metrics matter to our business and ignoring some of them may hinder us from discovering problems. Therefore, false negatives are very costly, and I don't want to correct for multiple comparisons at all. 
+
+To check practical and statistical significance, given alpha = 0.05,
+- Calculate the pooled proportion
+- Compute standard deviation of binomial distribution
+- Multiply by z-score to get margin of error
+- Calculate the observed difference in proportion between two groups
+- Compute confidence interval around the observed difference
+- Check whether the Confidence interval include 0 and the practical significance boundary
+
+**_Practical and Statistical Significance Test Results_**
+
+| Metric | dmin | Observed Difference | CI Lower Bound | CI Upper Bound | Statistical Significance | Practical Significance |
+|:------:|:--------------:|:--------------:|:--------------:|:--------------:|:------:|
+| Gross Conversion | 0.01 | -0.02056 | -.0291 | -.012 | Pass | Pass |
+| Net Conversion | 0.0075 | -0.0049 | -0.0116 | 0.0019 | Not Pass | Not Pass |
+
+# Run Sign Tests
+
+For each evaluation metric, do a sign test using the day-by-day breakdown. Sign test hypothesize that the probability of two outcomes (difference in two groups or not) have equal likelihood of 0.5. 
+- Let p = Pr(X > Y), and then test the null hypothesis H0: p = 0.50. In other words, the null hypothesis states that given a random pair of measurements (xi, yi), then xi and yi are equally likely to be larger than the other. - - Then let W be the number of pairs for which yi − xi > 0. Assuming that H0 is true, then W follows a binomial distribution W ~ b(m, 0.5). We can use binom_test function in Scipy to conduct the test
