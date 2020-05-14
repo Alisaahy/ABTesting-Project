@@ -99,7 +99,7 @@ The formula for sample size is:
 As from the formula:
 - z-beta = 0.84, if 1 - beta = 0.8
 - z-alpha/2 = 1.96, if alpha = 0.05
-- Standard deviation follows the formula that: ${SE}$ = $\frac{SD}{\sqrt{N}}$, which means we assume that the standard error is proportional to <math>$\frac{1}{\sqrt{N}}$</math>.
+- Standard deviation follows the formula that: ${SE}$ = $\frac{SD}{\sqrt{N}}$, which means we assume that the standard error is proportional to <math>\frac{1}{\sqrt{N}}</math>.
 
 So I'll use the formula to firstly calculate the needed sample size, and then decide the total number of pageview needed.
 
