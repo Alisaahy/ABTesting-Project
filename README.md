@@ -67,9 +67,7 @@ For each metric you selected as an evaluation metric, estimate its standard devi
 Our three metrics are all in the form of probability, so we can assume them to be binomial distribution and used the formula to calculate the standard deviation of the sampling distribution for the proportion, or standard error:
 
 ```math
-\begin{align}
 \sqrt{\frac{P*(1-P)}{N}}
-\end{align}
 ```
 
 Due to different unit of analysis these three metrics use, we should firstly calculate the number of unit of analysis. 
