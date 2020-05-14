@@ -1,5 +1,4 @@
-# ABTesting_Project
-Final Project for A/B Testing Course
+# ABTesting Final Project
 
 # Experiment Overview: Free Trial Screener
 
@@ -181,6 +180,6 @@ For each evaluation metric, do a sign test using the day-by-day breakdown. Sign 
 **_Sign Test Results_**
 
 | Metric | p-value for sign test | Statistically Significant | Matches with Significant Test? |
-|:------:|:--------------:|:--------------:|
+|:------:|:--------------:|:--------------:|:--------------:|
 | Gross Conversion | 0.0026 | Yes | Yes |
 | Net Conversion | 0.6776 | No | Yes |
