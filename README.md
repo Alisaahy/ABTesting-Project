@@ -99,7 +99,7 @@ As from the formula:
 
 So I'll use the formula to firstly calculate the needed sample size, and then decide the total number of pageview needed.
 
-**_Sample Size Calculation_**
+**_Sample Size Results**
 
 | Evaluation Metric | Sample Size Needed| Pageviews Needed | Days Needed to Gather Pageviews with 50% Traffic|
 |:-------------------:|:--------------------:|:--------------------:|:--------------------:|
@@ -178,7 +178,9 @@ To check practical and statistical significance, given alpha = 0.05,
 For each evaluation metric, do a sign test using the day-by-day breakdown. Sign test hypothesize that the probability of two outcomes (difference in two groups or not) have equal likelihood of 0.5. 
 - Let p = Pr(X > Y), and then test the null hypothesis H0: p = 0.50. In other words, the null hypothesis states that given a random pair of measurements (xi, yi), then xi and yi are equally likely to be larger than the other. - - Then let W be the number of pairs for which yi − xi > 0. Assuming that H0 is true, then W follows a binomial distribution W ~ b(m, 0.5). We can use binom_test function in Scipy to conduct the test
 
-| Metric | p-value for sign test | Statistically Significant @ alpha .05? |
+**_Sign Test Results_**
+
+| Metric | p-value for sign test | Statistically Significant | Matches with Significant Test? |
 |:------:|:--------------:|:--------------:|
-| Gross Conversion | 0.0026 | Yes |
-| Net Conversion | 0.6776 | No |
+| Gross Conversion | 0.0026 | Yes | Yes |
+| Net Conversion | 0.6776 | No | Yes |
