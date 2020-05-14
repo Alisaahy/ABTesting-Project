@@ -169,7 +169,7 @@ To check practical and statistical significance, given alpha = 0.05,
 **_Practical and Statistical Significance Test Results_**
 
 | Metric | dmin | Observed Difference | CI Lower Bound | CI Upper Bound | Statistical Significance | Practical Significance |
-|:------:|:--------------:|:--------------:|:--------------:|:--------------:|:------:|
+|:------:|:--------------:|:--------------:|:--------------:|:--------------:|:------:|:------:|
 | Gross Conversion | 0.01 | -0.02056 | -.0291 | -.012 | Pass | Pass |
 | Net Conversion | 0.0075 | -0.0049 | -0.0116 | 0.0019 | Not Pass | Not Pass |
 
@@ -177,3 +177,8 @@ To check practical and statistical significance, given alpha = 0.05,
 
 For each evaluation metric, do a sign test using the day-by-day breakdown. Sign test hypothesize that the probability of two outcomes (difference in two groups or not) have equal likelihood of 0.5. 
 - Let p = Pr(X > Y), and then test the null hypothesis H0: p = 0.50. In other words, the null hypothesis states that given a random pair of measurements (xi, yi), then xi and yi are equally likely to be larger than the other. - - Then let W be the number of pairs for which yi − xi > 0. Assuming that H0 is true, then W follows a binomial distribution W ~ b(m, 0.5). We can use binom_test function in Scipy to conduct the test
+
+| Metric | p-value for sign test | Statistically Significant @ alpha .05? |
+|:------:|:--------------:|:--------------:|
+| Gross Conversion | 0.0026 | Yes |
+| Net Conversion | 0.6776 | No |
